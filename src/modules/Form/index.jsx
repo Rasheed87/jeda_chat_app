@@ -5,62 +5,44 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Form = ({ isSignedInPage = false }) => {
+
+  
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
-    ...(isSignedInPage && { fullName: "" }),
+    ...(!isSignedInPage && {
+      fullName: "",
+    }),
     email: "",
     password: "",
   });
+  
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
+    console.log("data :>> ", inputValue);
     e.preventDefault();
-    console.log("Submitted:", inputValue);
-     
-   try {
-     console.log("Submitted:", inputValue);
+    const res = await fetch(
+      `http://localhost:8000/api/${isSignedInPage ? "login" : "register"}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputValue),
+      }
+    );
 
-     const res = await fetch(
-       `http://localhost:8000/api/${isSignedInPage ? "login" : "register"}`,
-       {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-         },
-         body: JSON.stringify(inputValue),
-       }
-     );
-
-     const resInputValue = await res.json();
-     console.log("input", resInputValue);
-
-     if (res.ok) {
-       // Reset the inputValue state only if the request was successful
-       setInputValue({
-         fullName: "",
-         email: "",
-         password: "",
-       });
-
-       // Navigate to the '/' route on successful login
-       navigate("/");
-     } else {
-       // Handle the case where the request was not successful
-       console.error("Error:", resInputValue.message);
-
-       // Check if the error message indicates invalid credentials
-       if (resInputValue.message === "Invalid credentials") {
-         // Alert the user about invalid credentials
-         alert("Invalid credentials");
-       }
-       // Add more specific error handling if needed
-     }
-   } catch (error) {
-     console.error("Error:", error.message);
-   }
-
-   
+    if (res.status === 400) {
+      alert("Invalid credentials");
+    } else {
+      const resInputValue = await res.json();
+      if (resInputValue.token) {
+        localStorage.setItem("user:token", resInputValue.token);
+        localStorage.setItem("user:detail", JSON.stringify(resInputValue.user));
+        navigate("/");
+      }
+    }
   };
 
-  const navigate = useNavigate()
    
   const handleClick = () => {
     navigate(`/users/${isSignedInPage ? "Sign_up" : "Sign_in"}`);

@@ -3,7 +3,7 @@ import "./App.css";
 import Dashboard from "./modules/Dashboard";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({children, auth = false}) => {
+const ProtectedRoute = ({children, auth= false}) => {
   const isLoggedIn = localStorage.getItem("user:token") !== null || false ;
 
   if (!isLoggedIn && auth) {

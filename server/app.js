@@ -53,25 +53,23 @@ app.post("/api/register", async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 app.post("/api/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      res.status(400).send("please fill in the required field");
+      res.status(400).send("Please fill all required fields");
     } else {
       const user = await Users.findOne({ email });
-
       if (!user) {
-        return res.status(401).send("Invalid credentials");
+        res.status(400).send("User email or password is incorrect");
       } else {
-        const isPasswordValid = await bcryptjs.compare(password, user.password);
-        if (!isPasswordValid) {
-          res.status(400).send("Ivalid credentials");
+        const validateUser = await bcryptjs.compare(password, user.password);
+        if (!validateUser) {
+          res.status(400).send("User email or password is incorrect");
         } else {
           const payload = {
-            userId: user.id,
+            userId: user._id,
             email: user.email,
           };
           const JWT_SECRET_KEY =
@@ -82,21 +80,30 @@ app.post("/api/login", async (req, res, next) => {
             JWT_SECRET_KEY,
             { expiresIn: 84600 },
             async (err, token) => {
-              await Users.updateOne({ _id: user._id }, { $set: { token } });
-
+              await Users.updateOne(
+                { _id: user._id },
+                {
+                  $set: { token },
+                }
+              );
               user.save();
-               return res.status(200).json({
-                 user: { fullName: user.fullName, email: user.email },
-                 token: token,
-               });
-            });
-
-          
+              return res
+                .status(200)
+                .json({
+                  user: {
+                    id: user._id,
+                    email: user.email,
+                    fullName: user.fullName,
+                  },
+                  token: token,
+                });
+            }
+          );
         }
       }
     }
   } catch (error) {
-    console.log(error, "error");
+    console.log(error, "Error");
   }
 });
 
@@ -113,7 +120,7 @@ app.post("/api/conversation", async (req, res) => {
   }
 });
 
-app.get("/api/conversation/:userId", async (req, res) => {
+app.get("/api/conversations/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
 

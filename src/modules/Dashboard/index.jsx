@@ -1,69 +1,110 @@
 import "./index.css";
 import avt from "../../Assets/aavt1.png";
+import call from "../../Assets/caller.png"
+import plus from "../../Assets/plus.svg"
+import send from "../../Assets/send.png"
+import { useState, useEffect } from "react";
+
 
 const Dashboard = () => {
   const contacts = [
     {
+     index: 0,
       img: avt,
       name: "Ester",
       status: "Available",
     },
     {
+      index: 1,
       img: avt,
       name: "Michael",
       status: "Available",
     },
     {
+      index: 2,
       img: avt,
       name: "Princewill",
       status: "Available",
     },
     {
+      index: 3,
       img: avt,
       name: "Nnaka",
       status: "Available",
     },
     {
+      index: 4,
       img: avt,
       name: "Korede",
       status: "Available",
     },
     {
+      index: 5,
       img: avt,
       name: "Yinka",
       status: "Available",
     },
     {
+      index: 6,
       img: avt,
       name: "Ada",
       status: "Available",
     },
     {
+      index: 7,
       img: avt,
       name: "Yemi",
       status: "Available",
     },
     {
+      index: 8,
       img: avt,
       name: "Yemi",
       status: "Available",
     },
     {
+      index: 9,
       img: avt,
       name: "Yemi",
       status: "Available",
     },
     {
+      index: 10,
       img: avt,
       name: "Yemi",
       status: "Available",
     },
     {
+      index: 11,
       img: avt,
       name: "Yemi",
       status: "Available",
     },
   ];
+
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("user:detail"));
+    const fetchConversations = async () => {
+      const res = await fetch(
+        `http://localhost:8000/api/conversations/${loggedInUser?.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const resData = await res.json();
+      setConversations(resData);
+      console.log("resData :>> ", resData);
+    };
+    fetchConversations();
+  }, []);
+
+const [user, setUser] = useState(JSON.parse(localStorage.getItem("user:detail")));
+const [conversation, setConversations] = useState([])
+console.log("user :>> ", user);
+  
 
   return (
     <div className="dashboard">
@@ -74,16 +115,16 @@ const Dashboard = () => {
             <img className="img1" src={avt} alt="" />
           </div>
           <div className="name-acc">
-            <h3 className="name"> Ahmed Rasheed</h3>
+            <h3 className="name">{user?.fullName}</h3>
             <p className="acc">My Account</p>
           </div>
         </div>
         <div className="messages">
           <p className="msg-text">Messages</p>
           <div className="scroll">
-            {contacts.map(({ img, name, status }) => {
+            {contacts.map(({ img, name, status }, index) => {
               return (
-                <div className="account1">
+                <div key={index} className="account1">
                   <div className="img2">
                     <img className="img3" src={img} alt="" />
                   </div>
@@ -114,23 +155,7 @@ const Dashboard = () => {
           </div>
 
           <div className="caller">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icon-tabler icon-tabler-phone-outgoing"
-              width="30"
-              height="30"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="#2c3e50"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />
-              <path d="M15 9l5 -5" />
-              <path d="M16 4l4 0l0 4" />
-            </svg>
+            <img style={{ width: "26px", height: "26px" }} src={call} alt="" />
           </div>
         </div>
 
@@ -193,41 +218,18 @@ const Dashboard = () => {
           />
           <div className="pic">
             <div className="point">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-send"
-                width="26"
-                height="26"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="#2c3e50"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M10 14l11 -11" />
-                <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
-              </svg>
+              <img
+                style={{ width: "26px", height: "26px" }}
+                src={send}
+                alt=""
+              />
             </div>
             <div className="point">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-circle-plus"
-                width="26"
-                height="26"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="#2c3e50"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-                <path d="M9 12h6" />
-                <path d="M12 9v6" />
-              </svg>
+              <img
+                style={{ width: "26px", height: "26px" }}
+                src={plus}
+                alt=""
+              />
             </div>
           </div>
         </div>

@@ -187,7 +187,7 @@ const Dashboard = () => {
 
         <div className="footer">
           <input
-            className="input"
+            className="surf"
             type="text"
             placeholder="Type a message ..."
           />

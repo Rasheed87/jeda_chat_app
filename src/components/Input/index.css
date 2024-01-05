@@ -4,4 +4,6 @@
   padding: 10px;
   width: 16rem;
   border-radius: 10px;
+  background-color: none;
+  display: flex;
 }

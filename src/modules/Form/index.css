@@ -1,6 +1,6 @@
 .form1{
     width: 28rem;
-    height: 35rem;
+    height: 100vh;
     /* border: 2px solid black; */
     display: flex;
     flex-direction: column;
